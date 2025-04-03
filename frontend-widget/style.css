@@ -39,3 +39,66 @@ body {
     margin-top: 1rem;
   }
   
+  .signup-section {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    
+}
+
+.signup-section h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+.signup-section label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #555;
+}
+
+.signup-section input,
+.signup-section select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.signup-section button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.signup-section button:hover {
+    background-color: #218838;
+}
+
+@media screen and (max-width: 480px) {
+    .signup-section {
+      padding: 20px;
+      margin: 1rem;
+      width: 90%;
+    }
+  
+    .signup-section input,
+    .signup-section select,
+    .signup-section button {
+      font-size: 14px;
+    }
+  }
+  

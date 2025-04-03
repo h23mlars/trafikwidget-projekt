@@ -1,11 +1,51 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <title>Skapa trafikprenumeration</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrera Prenumeration</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>📩 Skapa trafikprenumeration</h2>
-  <p>Här kommer du kunna registrera dig och välja område för SMS-varningar.</p>
+    <header>
+        <h1>Trafikuppdateringar</h1>
+    </header>
+
+    <main>
+        <section class="signup-section">
+            <h2>Registrera dig för trafikuppdateringar</h2>
+            <form id="signup-form">
+                <!-- E-post och lösenord för registrering -->
+                <label for="email">E-post:</label>
+                <input type="email" id="email" name="email" required autocomplete="email">
+
+                <label for="password">Lösenord:</label>
+                <input type="password" id="password" name="password" required autocomplete="new-password">
+
+                <label for="phone">Telefonnummer:</label>
+                <input type="text" id="phone" name="phone" required autocomplete="tel">
+
+                <label for="location">Plats (t.ex. Luleå):</label>
+                <input type="text" id="location" name="location" value="Luleå" required>
+
+                <!-- Betalning -->
+                <label for="payment">Välj betalmetod:</label>
+                <select id="payment" name="payment">
+                    <option value="stripe">Stripe (Kortbetalning)</option>
+                </select>
+
+                <button type="submit">Starta prenumeration</button>
+            </form>
+            <p id="response-message"></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Trafikuppdateringar AB</p>
+    </footer>
+
+<!-- Ladda Supabase JavaScript-klienten från CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>
+    <script src="signup.js"></script>
 </body>
 </html>
