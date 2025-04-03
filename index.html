@@ -48,15 +48,15 @@
 
   <script>
     window.addEventListener("message", function(event) {
-      const iframe = document.getElementById("traffic-widget");
-
+      // Säkert: du kan även kontrollera event.origin här om du vill
       if (event.data.type === "resize" && event.data.height) {
+        const iframe = document.getElementById("traffic-widget");
         iframe.style.height = event.data.height + "px";
       }
-
-      // 👇 Fångar när användaren klickar "Skapa trafikprenumeration" i widgeten
+  
       if (event.data.type === "open-signup") {
-        loadSignupView();
+        // 🚀 Öppna signup.html i hela fönstret
+        window.location.href = "https://h23mlars.github.io/trafikwidget-projekt/signup.html";
       }
     });
 
