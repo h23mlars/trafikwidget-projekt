@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Norrpressen – Mock News</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Norrpressen</h1>
+    <nav>
+      <a href="#">Nyheter</a>
+      <a href="#">Sport</a>
+      <a href="#">Kultur</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="main-content" id="main-content">
+      <!-- Startsida / nyhetsvy -->
+      <article>
+        <h2>Stora trafikstörningar i norr</h2>
+        <p>Störningar på E4:an väntas fortsätta under eftermiddagen.</p>
+      </article>
+
+      <article>
+        <h2>Boende: Vi vill ha bättre information</h2>
+        <p>Flera boende i Luleå efterfrågar bättre uppdateringar om trafikläget i kommunen.</p>
+      </article>
+    </section>
+
+    <aside class="sidebar">
+      <h2>Trafikläget just nu</h2>
+      <iframe id="traffic-widget" src="../frontend-widget/index.html" width="100%" style="border: 1px solid #ccc;" scrolling="no"></iframe>
+    </aside>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Norrpressen AB</p>
+  </footer>
+
+  <script>
+    window.addEventListener("message", function(event) {
+      const iframe = document.getElementById("traffic-widget");
+
+      if (event.data.type === "resize" && event.data.height) {
+        iframe.style.height = event.data.height + "px";
+      }
+
+      // 👇 Fångar när användaren klickar "Skapa trafikprenumeration" i widgeten
+      if (event.data.type === "open-signup") {
+        loadSignupView();
+      }
+    });
+
+    function loadSignupView() {
+      const main = document.getElementById("main-content");
+      main.innerHTML = `
+        <article>
+          <h2>📩 Skapa trafikprenumeration</h2>
+          <p>Fyll i dina uppgifter nedan för att börja ta emot SMS-varningar om trafikläget i ditt område.</p>
+          <form id="signup-form">
+            <label>Telefonnummer:<br><input type="text" name="phone" required></label><br><br>
+            <label>Plats:<br><input type="text" name="location" required></label><br><br>
+            <button type="submit">Starta prenumeration</button>
+          </form>
+          <p id="response-message" style="margin-top: 1rem;"></p>
+        </article>
+      `;
+
+      document.getElementById("signup-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const phone = e.target.phone.value;
+        const location = e.target.location.value;
+
+        const res = await fetch("http://localhost:5000/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone, location })
+        });
+
+        const result = await res.json();
+        document.getElementById("response-message").textContent =
+          result.message || "Tack! Du är nu prenumerant!";
+        e.target.reset();
+      });
+    }
+  </script>
+</body>
+</html>

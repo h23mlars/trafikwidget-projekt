@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <title>Trafikläge-widget</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="traffic-widget">
+    <strong>🚦 Trafikläget i Luleå:</strong>
+    <ul>
+      <li>Olycka på E4:an vid Sunderbyn</li>
+      <li>Vägarbete på Bergnäsvägen</li>
+      <li>Halka rapporterad i Gammelstad</li>
+    </ul>
+
+    <p>📩 Vill du få trafikvarningar via SMS?</p>
+    <button onclick="parent.postMessage({ type: 'open-signup' }, '*')">
+        📩 Skapa trafikprenumeration
+    </button>
+  </div>
+
+  <script>
+    function sendHeight() {
+      const height = document.body.scrollHeight;
+      parent.postMessage({ type: "resize", height: height }, "*");
+    }
+
+    window.addEventListener("load", sendHeight);
+    window.addEventListener("resize", sendHeight);
+  </script>
+</body>
+</html>
