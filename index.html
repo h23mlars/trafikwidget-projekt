@@ -34,7 +34,6 @@
       <h2>Trafikläget just nu</h2>
         <iframe 
           id="traffic-widget" 
-          src="https://h23mlars.github.io/trafikwidget-projekt/frontend-widget/index.html" 
           width="100%" 
           style="border: 1px solid #ccc;" 
           scrolling="no">
@@ -47,19 +46,24 @@
   </footer>
 
   <script>
+    // ✅ Kolla om vi kör lokalt eller på GitHub Pages
+    const isLocalhost = location.hostname === "127.0.0.1" || location.hostname === "localhost";
+    const basePath = isLocalhost ? "" : "https://h23mlars.github.io/trafikwidget-projekt";
+  
+    // ✅ Hantera meddelanden från widgeten
     window.addEventListener("message", function(event) {
-      // Säkert: du kan även kontrollera event.origin här om du vill
       if (event.data.type === "resize" && event.data.height) {
         const iframe = document.getElementById("traffic-widget");
         iframe.style.height = event.data.height + "px";
       }
   
       if (event.data.type === "open-signup") {
-        // 🚀 Öppna signup.html i hela fönstret
-        window.location.href = "https://h23mlars.github.io/trafikwidget-projekt/frontend-widget/signup.html";
+        // 🚀 Dirigera till signup-sidan beroende på miljö
+        window.location.href = `${basePath}/components/signup.html`;
       }
     });
-
+  
+    // 🧪 Testfunktion om du vill ladda signup direkt i main-content (ej redirect)
     function loadSignupView() {
       const main = document.getElementById("main-content");
       main.innerHTML = `
@@ -74,18 +78,18 @@
           <p id="response-message" style="margin-top: 1rem;"></p>
         </article>
       `;
-
+  
       document.getElementById("signup-form").addEventListener("submit", async (e) => {
         e.preventDefault();
         const phone = e.target.phone.value;
         const location = e.target.location.value;
-
-        const res = await fetch("http://localhost:5000/subscribe", {
+  
+        const res = await fetch("http://localhost:5500/subscribe", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ phone, location })
         });
-
+  
         const result = await res.json();
         document.getElementById("response-message").textContent =
           result.message || "Tack! Du är nu prenumerant!";
@@ -93,5 +97,6 @@
       });
     }
   </script>
+  
 </body>
 </html>

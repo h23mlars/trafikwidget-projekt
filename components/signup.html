@@ -1,0 +1,28 @@
+<section class="signup-section">
+    <h2>📩 Skapa trafikprenumeration</h2>
+    <p>Fyll i dina uppgifter nedan för att börja ta emot SMS-varningar om trafikläget i ditt område.</p>
+  
+    <form id="signup-form">
+      <label for="email">E-post:</label>
+      <input type="email" id="email" name="email" required autocomplete="email" />
+  
+      <label for="password">Lösenord:</label>
+      <input type="password" id="password" name="password" required autocomplete="new-password" />
+  
+      <label for="phone">Telefonnummer:</label>
+      <input type="tel" id="phone" name="phone" required autocomplete="tel" />
+  
+      <label for="location">Plats (t.ex. Luleå):</label>
+      <input type="text" id="location" name="location" value="Luleå" required />
+  
+      <label for="payment">Välj betalmetod:</label>
+      <select id="payment" name="payment">
+        <option value="stripe">Stripe (Kortbetalning)</option>
+      </select>
+  
+      <button type="submit">Starta prenumeration</button>
+    </form>
+  
+    <p id="response-message" style="margin-top: 1rem;"></p>
+  </section>
+  
