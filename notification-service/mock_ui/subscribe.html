@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prenumerera på trafikinfo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>Trafikprenumeration</h1>
+    <form id="subscribe-form">
+      <label for="phone">Telefonnummer:</label>
+      <input type="text" id="phone" required placeholder="+46701234567">
+
+      <label for="county">Välj län:</label>
+      <select id="county" required>
+        <option disabled selected>Välj län...</option>
+      </select>
+      
+      <label for="location">Välj plats:</label>
+      <select id="location" disabled required>
+        <option disabled selected>Välj plats...</option>
+      </select>
+      
+
+      <fieldset>
+        <legend>Vad vill du få uppdateringar om?</legend>
+        <label><input type="checkbox" value="olyckor" checked> Olyckor</label><br>
+        <label><input type="checkbox" value="vägarbeten"> Vägarbeten</label><br>
+        <label><input type="checkbox" value="fartkameror"> Fartkameror</label>
+      </fieldset>
+
+      <button type="submit">Starta prenumeration</button>
+      <button type="button" id="test-trafik">Testa trafikinfo</button>
+
+    </form>
+
+    <p id="response-message"></p>
+  </main>
+
+  <script src="subscribe.js"></script>
+</body>
+</html>

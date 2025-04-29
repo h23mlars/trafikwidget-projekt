@@ -1,0 +1,30 @@
+body {
+    font-family: sans-serif;
+    background: #f9f9f9;
+    padding: 2rem;
+  }
+  main {
+    background: white;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  label, select, input, fieldset, button {
+    display: block;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #0056b3;
+  }
+  
