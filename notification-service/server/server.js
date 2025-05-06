@@ -16,58 +16,12 @@ app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
 
-app.get("/trafikinfo/:county", async (req, res) => {
-  try {
-    const countyId = req.params.county;
-    
-    const response = await axios.post('https://api.trafikinfo.trafikverket.se/v2/data.json', {
-      auth: {
-        key: process.env.TRAFIKVERKET_API_KEY
-      },
-      query: [
-        {
-          objecttype: 'Situation',
-          filter: {
-            and: [
-              {
-                eq: {
-                  property: 'CountyNo',
-                  value: countyId
-                }
-              },
-              {
-                in: {
-                  property: 'DeviationType',
-                  values: ['ACCIDENT', 'ROADWORKS', 'SPEED_CAMERA']
-                }
-              }
-            ]
-          },
-          include: ['Message', 'StartTime', 'EndTime', 'DeviationType']
-        }
-      ]
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    const updates = response.data.RESPONSE.RESULT[0].Situation.map(situation => ({
-      title: situation.Message,
-      description: `Typ: ${situation.DeviationType}`,
-      timestamp: situation.StartTime,
-      endTime: situation.EndTime
-    }));
-
-    res.json(updates);
-  } catch (error) {
-    console.error('Fel vid hämtning av trafikuppdateringar:', error);
-    res.status(500).json({ error: 'Kunde inte hämta trafikuppdateringar' });
-  }
-});
-
 app.post("/send-email", async (req, res) => {
   const { to, subject, text } = req.body;
+
+  if (!to || !subject || !text) {
+    return res.status(400).json({ error: "Missing 'to', 'subject' or 'text'" });
+  }
 
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -107,6 +61,16 @@ app.post("/send-sms", async (req, res) => {
   for (const number of recipients) {
     const formatted = number.replace(/\s+/g, "");
 
+    if (process.env.MOCK_SMS === "true") {
+      console.log(`🧪 MOCK SMS ➤ To: ${formatted}, Message: ${message}`);
+      responses.push({
+        to: formatted,
+        id: "mock-id",
+        status: "mocked"
+      });
+      continue;
+    }
+
     try {
       const response = await axios.post(
         "https://api.46elks.com/a1/sms",
@@ -142,5 +106,5 @@ app.post("/send-sms", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`✅ Notification server running on port ${PORT}`);
 });
