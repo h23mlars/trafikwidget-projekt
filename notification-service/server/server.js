@@ -56,54 +56,36 @@ app.post("/send-sms", async (req, res) => {
   }
 
   const recipients = Array.isArray(to) ? to : [to];
-  const responses = [];
 
-  for (const number of recipients) {
-    const formatted = number.replace(/\s+/g, "");
+  // Base64-auth header for HelloSMS
+  const auth = Buffer.from(`${process.env.SMS_USER}:${process.env.SMS_PASS}`).toString("base64");
 
-    if (process.env.MOCK_SMS === "true") {
-      console.log(`🧪 MOCK SMS ➤ To: ${formatted}, Message: ${message}`);
-      responses.push({
-        to: formatted,
-        id: "mock-id",
-        status: "mocked"
-      });
-      continue;
-    }
-
-    try {
-      const response = await axios.post(
-        "https://api.46elks.com/a1/sms",
-        new URLSearchParams({
-          from: sender,
-          to: formatted,
-          message
-        }),
-        {
-          auth: {
-            username: process.env.ELKS_USER,
-            password: process.env.ELKS_PASS
-          }
+  // Use HelloSMS endpoint
+  try {
+    const response = await axios.post(
+      "https://api.hellosms.com/sms/send", // kontrollera exakt endpoint från dokumentationen
+      {
+        to: recipients,
+        message,
+        sender
+      },
+      {
+        headers: {
+          Authorization: `Basic ${auth}`,
+          "Content-Type": "application/json"
         }
-      );
+      }
+    );
 
-      responses.push({
-        to: formatted,
-        id: response.data.id,
-        status: response.status
-      });
-    } catch (err) {
-      console.error("SMS error:", err.response?.data || err.message);
-      responses.push({
-        to: formatted,
-        id: "error",
-        error: err.response?.data || err.message
-      });
-    }
+    console.log("✅ HelloSMS response:", response.data);
+
+    res.status(200).json({ message: "SMS sent!", results: response.data });
+  } catch (err) {
+    console.error("SMS error:", err.response?.data || err.message);
+    res.status(500).json({ error: "Failed to send SMS", details: err.response?.data || err.message });
   }
-
-  res.status(200).json({ results: responses });
 });
+
 
 app.listen(PORT, () => {
   console.log(`✅ Notification server running on port ${PORT}`);
