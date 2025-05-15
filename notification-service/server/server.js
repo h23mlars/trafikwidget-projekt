@@ -63,7 +63,7 @@ app.post("/send-sms", async (req, res) => {
   // Use HelloSMS endpoint
   try {
     const response = await axios.post(
-      "https://api.hellosms.com/sms/send", // kontrollera exakt endpoint från dokumentationen
+      "https://api.hellosms.se/api/v1/sms/send", // kontrollera exakt endpoint från dokumentationen
       {
         to: recipients,
         message,
