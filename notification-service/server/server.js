@@ -48,43 +48,64 @@ app.post("/send-email", async (req, res) => {
   }
 });
 
+const fromRegex = /^[A-Za-z0-9 _åäö]{3,11}$/i;
+
 app.post("/send-sms", async (req, res) => {
-  const { to, message, sender = "TrafikInfo" } = req.body;
+  const {
+    to,
+    message,
+    from = "TrafikInfo",
+    testMode = false
+  } = req.body;
 
   if (!to || !message) {
     return res.status(400).json({ error: "Missing 'to' or 'message'" });
   }
 
+  if (!fromRegex.test(from)) {
+    return res.status(400).json({
+      error: "Invalid sender name",
+      details:
+        "Sender must be 3–11 characters and contain only letters, numbers, spaces, underscores, or åäö."
+    });
+  }
+
   const recipients = Array.isArray(to) ? to : [to];
 
-  // Base64-auth header for HelloSMS
   const auth = Buffer.from(`${process.env.SMS_USER}:${process.env.SMS_PASS}`).toString("base64");
 
-  // Use HelloSMS endpoint
   try {
     const response = await axios.post(
-      "https://api.hellosms.se/api/v1/sms/send", // kontrollera exakt endpoint från dokumentationen
+      "https://api.hellosms.se/api/v1/sms/send",
       {
         to: recipients,
+        from,
         message,
-        sender
+        testMode
       },
       {
         headers: {
           Authorization: `Basic ${auth}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          Accept: "application/json"
         }
       }
     );
 
-    console.log("✅ HelloSMS response:", response.data);
+    res.status(200).json({
+      message: "SMS sent",
+      actualFrom: from,
+      apiResponse: response.data
+    });
 
-    res.status(200).json({ message: "SMS sent!", results: response.data });
   } catch (err) {
-    console.error("SMS error:", err.response?.data || err.message);
-    res.status(500).json({ error: "Failed to send SMS", details: err.response?.data || err.message });
+    res.status(500).json({
+      error: "Failed to send SMS",
+      details: err.response?.data || err.message
+    });
   }
 });
+
 
 
 app.listen(PORT, () => {
