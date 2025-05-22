@@ -17,10 +17,10 @@ app.get("/health", (req, res) => {
 });
 
 app.post("/send-email", async (req, res) => {
-  const { to, subject, text } = req.body;
+  const { to, subject, message } = req.body;
 
-  if (!to || !subject || !text) {
-    return res.status(400).json({ error: "Missing 'to', 'subject' or 'text'" });
+  if (!to || !subject || !message) {
+    return res.status(400).json({ error: "Missing 'to', 'subject' or 'message'" });
   }
 
   const transporter = nodemailer.createTransport({
@@ -38,7 +38,7 @@ app.post("/send-email", async (req, res) => {
       from: process.env.SMTP_USER,
       to,
       subject,
-      text
+      text: message  // detta är korrekt
     });
 
     res.status(200).json({ message: "Email sent!" });
@@ -47,6 +47,7 @@ app.post("/send-email", async (req, res) => {
     res.status(500).json({ error: "Failed to send email" });
   }
 });
+
 
 const fromRegex = /^[A-Za-z0-9 _åäö]{3,11}$/i;
 
