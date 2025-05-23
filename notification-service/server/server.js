@@ -4,19 +4,38 @@ import nodemailer from "nodemailer";
 import axios from "axios";
 import cors from "cors";
 
+// Ladda miljövariabler
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// 🔐 API-nyckelkontroll
+const checkApiKey = (req, res, next) => {
+  const providedKey = req.headers["x-api-key"];
+  const expectedKey = process.env.API_KEY;
+
+  if (!providedKey || providedKey !== expectedKey) {
+    return res.status(401).json({
+      status: "error",
+      statusText: "Invalid or missing API key"
+    });
+  }
+
+  next();
+};
+
+// Hälsokoll
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
 
-app.post("/send-email", async (req, res) => {
+// ✉️ Skicka e-post
+app.post("/send-email", checkApiKey, async (req, res) => {
   const { to, subject, message } = req.body;
 
   if (!to || !subject || !message) {
@@ -38,7 +57,7 @@ app.post("/send-email", async (req, res) => {
       from: process.env.SMTP_USER,
       to,
       subject,
-      text: message  // detta är korrekt
+      text: message
     });
 
     res.status(200).json({ message: "Email sent!" });
@@ -48,15 +67,16 @@ app.post("/send-email", async (req, res) => {
   }
 });
 
-
+// 📲 Skicka SMS
 const fromRegex = /^[A-Za-z0-9 _åäö]{3,11}$/i;
 
-app.post("/send-sms", async (req, res) => {
+app.post("/send-sms", checkApiKey, async (req, res) => {
   const {
     to,
     message,
     from = "TrafikInfo",
-    testMode = false
+    testMode = false,
+    shortLinks = false
   } = req.body;
 
   if (!to || !message) {
@@ -82,7 +102,8 @@ app.post("/send-sms", async (req, res) => {
         to: recipients,
         from,
         message,
-        testMode
+        testMode,
+        shortLinks
       },
       {
         headers: {
@@ -98,7 +119,6 @@ app.post("/send-sms", async (req, res) => {
       actualFrom: from,
       apiResponse: response.data
     });
-
   } catch (err) {
     res.status(500).json({
       error: "Failed to send SMS",
@@ -107,8 +127,7 @@ app.post("/send-sms", async (req, res) => {
   }
 });
 
-
-
+// Starta server
 app.listen(PORT, () => {
   console.log(`✅ Notification server running on port ${PORT}`);
 });
