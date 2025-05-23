@@ -4,13 +4,13 @@ import nodemailer from "nodemailer";
 import axios from "axios";
 import cors from "cors";
 
-// Ladda miljövariabler
+// 🔐 Ladda miljövariabler
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// 📦 Middleware
 app.use(cors());
 app.use(express.json());
 
@@ -32,9 +32,7 @@ const checkApiKey = (req, res, next) => {
   next();
 };
 
-
-
-// Hälsokoll
+// ✅ Hälsokoll
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
@@ -58,17 +56,21 @@ app.post("/send-email", checkApiKey, async (req, res) => {
   });
 
   try {
-    await transporter.sendMail({
+    console.log("📤 Försöker skicka mail till:", to);
+
+    const result = await transporter.sendMail({
       from: process.env.SMTP_USER,
       to,
       subject,
       text: message
     });
 
+    console.log("✅ Mail skickat:", result.response || result);
     res.status(200).json({ message: "Email sent!" });
+
   } catch (err) {
-    console.error("SMTP error:", err);
-    res.status(500).json({ error: "Failed to send email" });
+    console.error("❌ SMTP error:", err);
+    res.status(502).json({ error: "Failed to send email", details: err.message });
   }
 });
 
@@ -119,12 +121,15 @@ app.post("/send-sms", checkApiKey, async (req, res) => {
       }
     );
 
+    console.log("✅ SMS skickat:", response.data);
     res.status(200).json({
       message: "SMS sent",
       actualFrom: from,
       apiResponse: response.data
     });
+
   } catch (err) {
+    console.error("❌ SMS error:", err.response?.data || err.message);
     res.status(500).json({
       error: "Failed to send SMS",
       details: err.response?.data || err.message
@@ -132,7 +137,7 @@ app.post("/send-sms", checkApiKey, async (req, res) => {
   }
 });
 
-// Starta server
+// 🚀 Starta server
 app.listen(PORT, () => {
   console.log(`✅ Notification server running on port ${PORT}`);
 });
