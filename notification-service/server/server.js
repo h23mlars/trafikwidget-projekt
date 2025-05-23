@@ -17,7 +17,7 @@ app.use(express.json());
 // 🔐 API-nyckelkontroll
 const checkApiKey = (req, res, next) => {
   const providedKey = req.headers["x-api-key"];
-  const expectedKey = process.env["X-API-KEY"];
+  const expectedKey = process.env["X_API_KEY"];
 
   console.log("🛡️ Mottagen:", providedKey);
   console.log("🔐 Förväntad:", expectedKey);
